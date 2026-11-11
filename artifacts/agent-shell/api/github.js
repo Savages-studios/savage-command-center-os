@@ -4,7 +4,7 @@
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GITHUB_REPO = process.env.GITHUB_REPO || 'savage-command-center-os';
-const GITHUB_OWNER = process.env.GITHUB_OWNER || 'savagnic';
+const GITHUB_OWNER = process.env.GITHUB_OWNER || 'sa6ag9';
 
 // Public dashboard reads never inherit the privileged server token.
 // Only the /user profile lookup is allowed to authenticate.
