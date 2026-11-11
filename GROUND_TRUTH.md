@@ -1,7 +1,7 @@
 # savage-command-center-os — Ground Truth
 
-**Last verified:** 2026-11-03 (Tonight Sprint merge train — Tights first-hand local verification: every diff read in full, suite run on each exact PR head + baseline control + merged master, post-merge tree proofs; no deployed-runtime validation)
-**Canonical branch:** master @ be88f72eeb0648e96f7132b14dcd8f3fd2cfb7ad
+**Last verified:** 2026-11-10 (fixes #92/#93 — queue rows D3 + D4; diff read in full, suite run on the exact PR head tree + pristine-master baseline control; no deployed-runtime validation). Prior full verification: 2026-11-03 (Tonight Sprint merge train).
+**Canonical branch:** master (this PR is based on master @ ed0e87fee03834b88a710aa5160d6af5375438fd)
 
 ## What this repo is
 
@@ -65,6 +65,33 @@ unverifiable from here.
 ## Where it is going
 
 No direction ruled by Savage for this repo.
+
+## Fixes landed 2026-11-10 (queue rows D3 + D4)
+
+- **D3 (fix #92) — GitHub intel default owner corrected.** The
+  `GITHUB_OWNER` fallback in `api/github.js` (and its byte-identical
+  `artifacts/agent-shell/` copy) defaulted to `savagnic` — an account
+  that, as the correction section above already records, shows 0
+  repositories to the estate's token. The default is now `sa6ag9`, the
+  estate owner's GitHub login (the account this repo lived under
+  pre-org-move and the owner the intel test suite itself uses). With
+  `GITHUB_OWNER` unset, the handler now profiles `sa6ag9` out of the
+  box; the env override is unchanged. Pinned by
+  `tests/github-owner-default.test.mjs` (both handler copies, owner
+  unset). Stale pre-move references in README.md / VERCEL_SETUP.md
+  (`savagnic/` clone and import paths) were NOT touched by this fix
+  and remain as historical text.
+- **D4 (fix #93) — committed runtime log untracked.**
+  `server_output.log` (403 bytes, blob
+  `91d9f200d9aa00d07b0a497a5eef878bb6f12c86`) — a six-line local
+  loopback access log — was tracked in the tree despite the existing
+  `*.log` ignore rule. It is removed from the tree by this fix and
+  named explicitly in `.gitignore` alongside `*.log`. Its content is
+  not reproduced here. History is not rewritten: the log remains in
+  prior commits, which is the recorded history of the defect.
+- **Suite on this PR's head tree:** 83/83 pass, 0 fail (81 baseline
+  on pristine master + 2 new owner-default pins); `node --check`
+  clean on app.js and server.js.
 
 ## Estate rule
 
