@@ -1,7 +1,7 @@
 # savage-command-center-os — Ground Truth
 
-**Last verified:** 2026-11-10 (fixes #92/#93 — queue rows D3 + D4; diff read in full, suite run on the exact PR head tree + pristine-master baseline control; no deployed-runtime validation). Prior full verification: 2026-11-03 (Tonight Sprint merge train).
-**Canonical branch:** master (this PR is based on master @ ed0e87fee03834b88a710aa5160d6af5375438fd)
+**Last verified:** 2026-11-11 (fix #119 — queue row D2; census + diffs read in full, suite run on the exact PR head tree + pristine-master baseline control; no deployed-runtime validation). Prior: 2026-11-10 (fixes #92/#93 — queue rows D3 + D4). Prior full verification: 2026-11-03 (Tonight Sprint merge train).
+**Canonical branch:** master (this PR is based on master @ 6421e0fb8d8d840c1612857e4af59eb9ccdfe95e)
 
 ## What this repo is
 
@@ -92,6 +92,62 @@ No direction ruled by Savage for this repo.
 - **Suite on this PR's head tree:** 83/83 pass, 0 fail (81 baseline
   on pristine master + 2 new owner-default pins); `node --check`
   clean on app.js and server.js.
+
+## Fix landed 2026-11-11 (queue row D2)
+
+- **D2 (fix #119) — duplicated API artifacts de-duplicated.** The
+  tree carried the Vercel API layer twice: the live `api/` (+ root
+  `vercel.json`) and a snapshot bundle under `artifacts/agent-shell/`
+  (`api/` + `vercel.json`). Census of the bundle against the
+  canonical copies, by blob and by diff:
+  - `connections.js` — DIVERGENT: pre-#26 generation (wildcard CORS,
+    no integration-ID validation, a generic fallback answering
+    `ok: true` "Credentials stored" for connectors with no real
+    tester — the simulated-success behavior #26 ended canonically).
+  - `decisions.js` — DIVERGENT: pre-#28 generation (no
+    `requireWriteAuthorization` gate, wildcard CORS).
+  - `organism-status.js` — DIVERGENT: pre-#28 generation (no
+    write-auth gate on `PUT`, wildcard CORS on all methods).
+  - `github.js` — byte-identical duplicate (blob `f9effe6abc`).
+  - `vercel.json` — same routes, formatting-only divergence.
+  Canonical evidence: root `vercel.json` routes `/api/*` to `api/`;
+  the hardening trains landed on `api/` only (#26 `e30a0625`,
+  2026-11-01; #28 `5f9050e0`, 2026-11-04), while the bundle's
+  divergent trio was last substantively touched 2026-09-30; the
+  bundle has no `_write-auth.mjs` counterpart at all. Fix #92 above
+  records the cost of the duplication: it had to edit the
+  `artifacts/agent-shell/` copy of `github.js` alongside the live
+  one to keep them in step (that D3 note now describes an archived
+  snapshot).
+- **Disposition (archive, never delete):** the five bundle files
+  moved byte-for-byte to `archive/agent-shell-bundle/` (git records
+  renames; blob SHAs unchanged) with a census README there, and a
+  pointer README at `artifacts/agent-shell/` naming the canonical
+  locations. Nothing was deleted. The archived generation's only
+  unique material is the pre-hardening behavior #26/#28 deliberately
+  removed; it is preserved in the archive as the record of the
+  defect, and no reconciliation is owed back to the canonical
+  copies.
+- **Tests:** `tests/github-intel-public.test.mjs` and
+  `tests/github-owner-default.test.mjs` pinned both copies of the
+  intel handler; they now pin the canonical `api/github.js` only —
+  the archived snapshot is not a shipped entrypoint. That removes
+  exactly the 5 duplicate-copy pins (intel-public 8 → 4,
+  owner-default 2 → 1, each duplicate pin having asserted against a
+  byte-identical copy). Every other test is untouched and no test
+  ever pinned the bundle's divergent trio.
+- **Suite on this PR's head tree:** 78/78 pass, 0 fail (pristine
+  master baseline control: 83/83; the −5 is the de-duplication
+  above, not a regression); `node --check` clean on app.js and
+  server.js; the AGENTS.md DOM/JS binding check passes. Tree:
+  84 blobs → 86 (5 paths moved, 2 pointer READMEs added).
+- **Also censused, not duplicates within this row's scope:**
+  `security/capability-gateway.{ts,js}` and
+  `security/nonce-ledger.{ts,js}` are a declared spec↔runtime-port
+  pair in one directory (each .js header names the .ts as the typed
+  specification it ports; `server.js` loads the .js); capability
+  sets and the 5000 ms nonce window agree. `README.md` and
+  `security/README.md` share only a filename, not an artifact.
 
 ## Estate rule
 
