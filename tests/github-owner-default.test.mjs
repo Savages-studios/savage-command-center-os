@@ -4,12 +4,15 @@ import { pathToFileURL } from 'node:url';
 import path from 'node:path';
 
 // Pins the GITHUB_OWNER default (queue row D3): with GITHUB_OWNER unset,
-// both copies of the intel handler must profile the estate owner's
-// account, sa6ag9 — not any other identity. The public-boundary tests set
-// GITHUB_OWNER explicitly, so the fallback itself needs its own pin.
+// the intel handler must profile the estate owner's account, sa6ag9 —
+// not any other identity. The public-boundary tests set GITHUB_OWNER
+// explicitly, so the fallback itself needs its own pin. The handler
+// exists exactly once since fix #119 (queue row D2) archived the
+// drifted artifacts/agent-shell copy; only the canonical api/github.js
+// is pinned.
 // Same controlled-upstream pattern as github-intel-public.test.mjs: no
 // external GitHub API access or private credentials are needed.
-const entrypoints = ['api/github.js', 'artifacts/agent-shell/api/github.js'];
+const entrypoints = ['api/github.js'];
 
 async function invokeWithOwnerUnset(file) {
   const oldFetch = globalThis.fetch;

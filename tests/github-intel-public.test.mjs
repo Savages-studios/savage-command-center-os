@@ -3,9 +3,12 @@ import assert from 'node:assert/strict';
 import { pathToFileURL } from 'node:url';
 import path from 'node:path';
 
-// These are real invocations of both HTTP handlers with a controlled GitHub
+// These are real invocations of the HTTP handler with a controlled GitHub
 // upstream. No external GitHub API access or private credentials are needed.
-const entrypoints = ['api/github.js', 'artifacts/agent-shell/api/github.js'];
+// The handler exists exactly once: the drifted artifacts/agent-shell copy
+// was archived by fix #119 (queue row D2); the archived snapshot is not a
+// shipped entrypoint and is no longer pinned here.
+const entrypoints = ['api/github.js'];
 
 async function invoke(file, responder, method = 'GET') {
   const oldFetch = globalThis.fetch;
