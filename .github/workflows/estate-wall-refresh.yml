@@ -1,0 +1,95 @@
+name: Estate Wall Refresh
+
+# Keeps the Live Estate Wall (data/estate-wall.json) verified and fresh.
+#
+# Cadence: every 6 hours, plus manual dispatch.
+#
+# Honest credential boundary:
+#   * Producing a FRESH attestation needs the estate credential — the
+#     secret ESTATE_GITHUB_TOKEN (a token that can read every repo in the
+#     Savages-studios org: heads, GROUND_TRUTH.md, workflow runs). Without
+#     that secret the fetch step is skipped, NOT faked.
+#   * When no fresh attestation is produced, this workflow re-verifies the
+#     artifact already published in data/estate-wall.json and republishes
+#     it only if verification passes (verified_at advances; attested_at
+#     and the digest do not change). It never fabricates a new attestation.
+#   * A tampered or unverifiable artifact fails the run and nothing is
+#     committed.
+#
+# The savage-standard checkout step provides the full re-derivation check
+# (`estate --check`). If that repo is unavailable to the workflow token,
+# the refresh still runs its built-in structural + JCS digest verification
+# and records exactly which checks ran in the published envelope.
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check out savage-standard (full re-derivation checker)
+        id: standard
+        uses: actions/checkout@v4
+        with:
+          repository: Savages-studios/savage-standard
+          path: .estate-standard
+        continue-on-error: true
+
+      - name: Fetch a fresh attestation (only with the estate credential)
+        id: fetch
+        if: ${{ secrets.ESTATE_GITHUB_TOKEN != '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.ESTATE_GITHUB_TOKEN }}
+          PYTHONPATH: .estate-standard
+        run: |
+          if [ -d .estate-standard/savage_standard ]; then
+            # Note: `estate --fetch` exits 1 when the attestation names any
+            # failures (drifted GT, failing CI) even though it wrote a valid
+            # artifact — the artifact file, not the exit code, is the signal.
+            python3 -m savage_standard.cli estate --org Savages-studios --fetch -o "$RUNNER_TEMP/estate-attestation.json" || true
+            test -s "$RUNNER_TEMP/estate-attestation.json"
+            echo "fresh=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "savage-standard unavailable; skipping fetch"
+          fi
+
+      - name: Verify and publish (fresh attestation, or re-verify the last good one)
+        run: |
+          STD=""
+          if [ -d .estate-standard/savage_standard ]; then STD="--savage-standard .estate-standard"; fi
+          if [ "${{ steps.fetch.outputs.fresh }}" = "1" ]; then
+            node scripts/refresh-estate-wall.mjs --attestation "$RUNNER_TEMP/estate-attestation.json" $STD
+          else
+            # Extract the last good artifact from the published envelope and
+            # re-verify it end to end before republishing. No new attestation
+            # is fabricated in this path.
+            node -e "const fs=require('fs');const e=JSON.parse(fs.readFileSync('data/estate-wall.json','utf8'));fs.writeFileSync(process.env.RUNNER_TEMP+'/last-good-attestation.json', JSON.stringify(e.artifact))"
+            node scripts/refresh-estate-wall.mjs --attestation "$RUNNER_TEMP/last-good-attestation.json" $STD
+          fi
+
+      - name: Run the Estate Wall controls
+        run: npm run test:estate-wall
+
+      - name: Commit the refreshed wall data (only if it changed)
+        run: |
+          if git diff --quiet -- data/estate-wall.json; then
+            echo "estate wall unchanged"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/estate-wall.json
+          git commit -m "chore(estate-wall): verified refresh"
+          git push

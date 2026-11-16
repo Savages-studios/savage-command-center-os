@@ -186,3 +186,53 @@ body {
 .wallet-info__row:last-child { border-bottom: none; }
 .wallet-info__label { font-family: var(--mono); font-size: 10px; color: var(--text3); width: 70px; flex-shrink: 0; }
 .wa
+/* ===== ESTATE WALL ===== */
+.estate-stale {
+  background: rgba(255,184,0,0.15); border: 1px solid var(--amber); color: var(--amber);
+  font-family: var(--mono); font-size: 12px; padding: 10px 12px;
+  border-radius: var(--radius-sm); margin-bottom: 14px;
+}
+.estate-error {
+  background: var(--red-dim); border: 1px solid var(--red); color: var(--red);
+  font-family: var(--mono); font-size: 12px; padding: 10px 12px;
+  border-radius: var(--radius-sm); margin-bottom: 14px;
+}
+.estate-meta {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 12px 14px; margin-bottom: 14px;
+}
+.estate-meta__row {
+  display: flex; gap: 12px; justify-content: space-between; padding: 3px 0;
+  font-size: 12px; border-bottom: 1px solid var(--bg4);
+}
+.estate-meta__row:last-child { border-bottom: none; }
+.estate-meta__row span:first-child { color: var(--text3); font-family: var(--mono); font-size: 11px; flex-shrink: 0; }
+.estate-meta__row code { font-family: var(--mono); font-size: 11px; word-break: break-all; text-align: right; }
+.estate-ok { color: var(--green); }
+.estate-bad { color: var(--red); }
+.estate-table-wrap { overflow-x: auto; }
+.estate-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.estate-table th {
+  font-family: var(--mono); font-size: 11px; text-align: left; color: var(--text3);
+  padding: 8px; border-bottom: 1px solid var(--border2); white-space: nowrap;
+}
+.estate-table td { padding: 7px 8px; border-bottom: 1px solid var(--bg4); vertical-align: top; }
+.estate-repo { font-family: var(--mono); font-weight: 600; white-space: nowrap; }
+.estate-head code { font-family: var(--mono); font-size: 11px; color: var(--text2); }
+.estate-claims { font-family: var(--mono); font-size: 11px; color: var(--text2); }
+.estate-claims--gated { color: var(--amber); }
+.estate-badge {
+  font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
+  padding: 2px 7px; border-radius: 3px; border: 1px solid; white-space: nowrap;
+}
+.estate-badge--gt-current { color: var(--green); border-color: var(--green); background: var(--green-dim); }
+.estate-badge--gt-drifted { color: var(--amber); border-color: var(--amber); background: var(--amber-dim); }
+.estate-badge--gt-unpinned { color: var(--amber); border-color: var(--amber); background: var(--amber-dim); }
+.estate-badge--gt-missing { color: var(--red); border-color: var(--red); background: var(--red-dim); }
+.estate-badge--ci-passing { color: var(--green); border-color: var(--green); background: var(--green-dim); }
+.estate-badge--ci-failing { color: var(--red); border-color: var(--red); background: var(--red-dim); }
+.estate-badge--ci-in_progress { color: var(--teal); border-color: var(--teal); background: var(--teal-dim); }
+.estate-badge--ci-not_passing { color: var(--amber); border-color: var(--amber); background: var(--amber-dim); }
+.estate-badge--ci-none_recorded { color: var(--text2); border-color: var(--border2); background: var(--bg4); }
+.estate-foot { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; font-size: 12px; }
+.estate-note { color: var(--text3); font-size: 11px; }
