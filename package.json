@@ -10,6 +10,8 @@
     "build": "tsc",
     "test": "node --experimental-vm-modules node_modules/.bin/jest --passWithNoTests",
     "test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watch",
+    "test:estate-wall": "node --test tests/estate-wall.test.mjs",
+    "refresh:estate-wall": "node scripts/refresh-estate-wall.mjs",
     "lint": "eslint . --ext .js,.ts",
     "typecheck": "tsc --noEmit"
   },

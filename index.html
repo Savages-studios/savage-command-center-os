@@ -43,6 +43,7 @@
       <button class="tab" data-panel="ops">OPS</button>
       <button class="tab" data-panel="intel">INTEL</button>
       <button class="tab" data-panel="ceros">CEROS</button>
+      <button class="tab" data-panel="estate">ESTATE</button>
     </div>
     <div class="topnav__right">
       <div class="wallet-status" id="wallet-status">
@@ -642,9 +643,46 @@
     </div>
   </section>
 
+  <!-- ======= ESTATE WALL ======= -->
+  <section class="panel" id="panel-estate">
+    <div class="panel__header">
+      <span class="panel__index">07</span>
+      <h2 class="panel__title">Live Estate Wall</h2>
+      <span class="panel__sub">Machine-verified estate attestation · savage.estate_attestation.v1</span>
+    </div>
+
+    <div class="estate-stale" id="estate-stale-banner" style="display:none"></div>
+    <div class="estate-error" id="estate-error" style="display:none"></div>
+
+    <div class="estate-meta">
+      <div class="estate-meta__row"><span>Org</span><span id="estate-org">—</span></div>
+      <div class="estate-meta__row"><span>Attested at</span><span id="estate-attested-at">—</span></div>
+      <div class="estate-meta__row"><span>Artifact digest (SHA-256)</span><code id="estate-digest">—</code></div>
+      <div class="estate-meta__row"><span>Verification</span><span id="estate-verification">—</span></div>
+      <div class="estate-meta__row"><span>Browser check</span><span id="estate-browser-digest">pending…</span></div>
+      <div class="estate-meta__row"><span>Signature</span><span id="estate-signed">—</span></div>
+    </div>
+
+    <div class="kpi-grid" id="estate-counts"></div>
+
+    <div class="estate-table-wrap">
+      <table class="estate-table">
+        <thead>
+          <tr><th>Repo</th><th>Ground Truth</th><th>CI</th><th>Claims</th><th>Head</th></tr>
+        </thead>
+        <tbody id="estate-rows"></tbody>
+      </table>
+    </div>
+    <div class="estate-foot">
+      <span id="estate-rendered-count">—</span>
+      <span class="estate-note">Every repo in the attestation is rendered. GT currency is a citation check (does GROUND_TRUTH.md cite the current head), CI is the recorded latest state — the attestation does not re-run suites. Unsigned: the estate signing key is not yet minted, so integrity rests on the digest + verification record above; no signature is claimed.</span>
+    </div>
+  </section>
+
 </main>
 
 <script src="ceros-stream.js"></script>
 <script src="app.js"></script>
+<script type="module" src="estate-wall.js"></script>
 </body>
 </html>
