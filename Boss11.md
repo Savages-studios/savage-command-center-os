@@ -1,4 +1,9 @@
 # Boss11 Entry — sovereign-command-center
+> **Claim state: mixed** — claim-gate labeling (evolution tranche, 2026-11-16).
+> The capability rows name code locations in this repo — code-present statements, not production proof — while the throughput and latency figures quoted in its dynamics sections are interface copy.
+> This file's own gap and contradiction sections show that copy is not measured by the client code, and GROUND_TRUTH.md governs: deployed runtime is unverified and the product is self-use.
+>
+
 
 ## 1. Repository Identity
 - **Canonical Repo Name:** `sovereign-command-center`
