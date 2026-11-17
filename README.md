@@ -1,4 +1,9 @@
 # 🚀 AGENT SHELL
+> **Claim state: unproven** — claim-gate labeling (evolution tranche, 2026-11-16).
+> The replay-reduction figure in the security notice is asserted here without a measurement behind it in this repo.
+> GROUND_TRUTH.md verifies the nonce-ledger code as a declared specification and runtime pair; it records no measurement of attack-surface reduction.
+>
+
 
 ## The Next-Generation Autonomous Command & Control System
 
